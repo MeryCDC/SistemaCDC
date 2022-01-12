@@ -11,9 +11,9 @@ class SalidasImportacionsController extends Controller
     public function index()
     {
         //
-        $salidas = salidas_importacions::join('users' , 'salidas__importacions.user_id', '=', 'users.id')
-        ->select('salidas__importacions.id', 'salidas__importacions.created_at' ,'users.name')
-        ->orderBy('salidas__importacions.id', 'desc')
+        $salidas = salidas_importacions::join('users' , 'salidas_importacions.user_id', '=', 'users.id')
+        ->select('salidas_importacions.id', 'salidas_importacions.created_at' ,'users.name')
+        ->orderBy('salidas_importacions.id', 'desc')
         ->get();
         return view('salidas.index', compact('salidas'));
     }
@@ -35,11 +35,11 @@ class SalidasImportacionsController extends Controller
     public function show($id)
     {
         //Obtengo todas las guias de la importacion seleccionada
-        $guiasImportaciones=out_impo_bods::join('salidas__importacions' , 'out_impo_bods.out_imp_id', '=', 'salidas__importacions.id')
-        ->join('salidas__bodegas' , 'out_impo_bods.out_bod_id', '=', 'salidas__bodegas.id')
-        ->join('users' , 'salidas__bodegas.user_id', '=', 'users.id')
-        ->select('salidas__bodegas.id' , 'salidas__bodegas.peso', 'salidas__bodegas.id_cdc', 'users.name')
-        ->where('salidas__importacions.id', '=', $id)
+        $guiasImportaciones=out_impo_bods::join('salidas_importacions' , 'out_impo_bods.out_imp_id', '=', 'salidas_importacions.id')
+        ->join('salidas_bodegas' , 'out_impo_bods.out_bod_id', '=', 'salidas_bodegas.id')
+        ->join('users' , 'salidas_bodegas.user_id', '=', 'users.id')
+        ->select('salidas_bodegas.id' , 'salidas_bodegas.peso', 'salidas_bodegas.id_cdc', 'users.name')
+        ->where('salidas_importacions.id', '=', $id)
         ->get();
 
        return view('salidas.guias', compact('guiasImportaciones' , 'id'));  
