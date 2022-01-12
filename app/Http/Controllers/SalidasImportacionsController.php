@@ -3,59 +3,58 @@
 namespace App\Http\Controllers;
 
 use App\Models\salidas_importacions;
+use App\Models\out_impo_bods;
 use Illuminate\Http\Request;
 
 class SalidasImportacionsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         //
+        $salidas = salidas_importacions::join('users' , 'salidas__importacions.user_id', '=', 'users.id')
+        ->select('salidas__importacions.id', 'salidas__importacions.created_at' ,'users.name')
+        ->orderBy('salidas__importacions.id', 'desc')
+        ->get();
+        return view('salidas.index', compact('salidas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $datos= new salidas_importacions();
+        $datos->user_id = $request->user_id;
+        $datos->save(); 
+
+        return redirect('salidas');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\salidas_importacions  $salidas_importacions
-     * @return \Illuminate\Http\Response
-     */
-    public function show(salidas_importacions $salidas_importacions)
+    public function show($id)
     {
-        //
+        //Obtengo todas las guias de la importacion seleccionada
+        $guiasImportaciones=out_impo_bods::join('salidas__importacions' , 'out_impo_bods.out_imp_id', '=', 'salidas__importacions.id')
+        ->join('salidas__bodegas' , 'out_impo_bods.out_bod_id', '=', 'salidas__bodegas.id')
+        ->join('users' , 'salidas__bodegas.user_id', '=', 'users.id')
+        ->select('salidas__bodegas.id' , 'salidas__bodegas.peso', 'salidas__bodegas.id_cdc', 'users.name')
+        ->where('salidas__importacions.id', '=', $id)
+        ->get();
+
+       return view('salidas.guias', compact('guiasImportaciones' , 'id'));  
+
+        //return view('salidas.guias');  
+        //return response()->json($guiasImportaciones); 
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\salidas_importacions  $salidas_importacions
+     * @param  \App\Models\Salidas_Importacion  $salidas_Importacion
      * @return \Illuminate\Http\Response
      */
-    public function edit(salidas_importacions $salidas_importacions)
+    public function edit(salidas_importacions $salidas_Importacion)
     {
         //
     }
@@ -64,10 +63,10 @@ class SalidasImportacionsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\salidas_importacions  $salidas_importacions
+     * @param  \App\Models\Salidas_Importacion  $salidas_Importacion
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, salidas_importacions $salidas_importacions)
+    public function update(Request $request, salidas_importacions $salidas_Importacion)
     {
         //
     }
@@ -75,10 +74,10 @@ class SalidasImportacionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\salidas_importacions  $salidas_importacions
+     * @param  \App\Models\Salidas_Importacion  $salidas_Importacion
      * @return \Illuminate\Http\Response
      */
-    public function destroy(salidas_importacions $salidas_importacions)
+    public function destroy(salidas_importacions $salidas_Importacion)
     {
         //
     }
