@@ -14,8 +14,15 @@ class CreateOutImpoBodsTable extends Migration
     public function up()
     {
         Schema::create('out_impo_bods', function (Blueprint $table) {
+            $table->engine="InnoDB"; //Permite el borrado en cascada
             $table->id();
             $table->timestamps();
+
+            $table->unsignedBigInteger('out_imp_id');
+            $table->unsignedBigInteger('out_bod_id');
+            
+            $table->foreign('out_imp_id')->references('id')->on('salidas__importacions'); //Constraint
+            $table->foreign('out_bod_id')->references('id')->on('salidas__bodegas'); //Constraint
         });
     }
 

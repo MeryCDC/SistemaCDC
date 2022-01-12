@@ -14,8 +14,13 @@ class CreateEntradasImportacionesTable extends Migration
     public function up()
     {
         Schema::create('entradas_importaciones', function (Blueprint $table) {
+            $table->engine="InnoDB"; //Permite el borrado en cascada
+
             $table->id();
             $table->timestamps();
+            $table->unsignedBigInteger('user_id');
+
+            $table->foreign('user_id')->references('id')->on('users'); //Constraint
         });
     }
 
