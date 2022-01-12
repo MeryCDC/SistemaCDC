@@ -21,8 +21,8 @@ class CreateOutImpoBodsTable extends Migration
             $table->unsignedBigInteger('out_imp_id');
             $table->unsignedBigInteger('out_bod_id');
             
-            $table->foreign('out_imp_id')->references('id')->on('salidas__importacions'); //Constraint
-            $table->foreign('out_bod_id')->references('id')->on('salidas__bodegas'); //Constraint
+            $table->foreign('out_imp_id')->references('id')->on('salidas_importacions'); //Constraint
+            $table->foreign('out_bod_id')->references('id')->on('salidas_bodegas'); //Constraint
         });
     }
 
