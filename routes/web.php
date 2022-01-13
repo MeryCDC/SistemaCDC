@@ -3,6 +3,7 @@
 use App\Http\Controllers\BarCodeController;
 use App\Http\Controllers\EntradasBodegasController;
 use App\Http\Controllers\EntradasImportacionesController;
+use App\Http\Controllers\SalidasBodegasController;
 use App\Http\Controllers\SalidasImportacionsController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,8 @@ Route::get('/ingresos/{id}/guias', [EntradasImportacionesController::class, 'sho
 Route::get('/etiqueta/{id}', [BarCodeController::class, 'index']);
 
 Route::resource('/salidas' , SalidasImportacionsController::class )->middleware('auth');
+
+Route::resource('/egresos' , SalidasBodegasController::class )->middleware('auth');
 
 Route::get('/salidas/{id}/guias', [SalidasImportacionsController::class, 'show'])->name('salidas.guias')->middleware('auth');
 
