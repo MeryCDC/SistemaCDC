@@ -1,5 +1,6 @@
 @extends('layouts.master')
 @section('content')
+
 <div class="content-wrapper"> 
     <div class="row">
         <div class="card-body col-lg-12 d-flex flex-column">
@@ -19,7 +20,7 @@
 
         <div class="card-body col-lg-12 d-flex flex-column">
             <div class="d-flex justify-content-between align-items-center">
-                <form action="{{ url('/entradas')}}"" class="form-inline needs-validation" id="formGuias" method="POST" novalidate>
+                <form action="{{ url('/egresos')}}"" class="form-inline needs-validation" id="formGuias" method="POST" novalidate>
                     @csrf
                     <div class="form-group row">
                     <div class="col">
@@ -37,7 +38,7 @@
                     </div>
                     <div class="col">
                         <label>Guia Transportadora *</label>
-                        <input type="number" step="any" name="alto" id="alto" class="form-control" required/>
+                        <input type="text" step="any" name="guia_transportadora" id="aguia_transportadora" class="form-control" required/>
                         <div class="invalid-feedback">
                             Ingrese el alto
                           </div>
@@ -57,7 +58,7 @@
                           </div>
                       </div> --}}
                       <div class="col">
-                        <button class="btn btn-primary" type="submit">Ingresar</button>
+                        <button class="btn btn-primary" type="submit">Salida</button>
                       </div>
                   </div>
                 </form>
@@ -70,20 +71,27 @@
                         <table id="tabla_guias" class="table dt-responsive table-sm">
                             <thead>
                                 <tr>
+                                    <th>Fecha</th>
                                     <th style="width:15px">ID</th>
-                                    
+                                    <th>T/G/I</th>
                                     <th>ID CDC</th>
-                                    
-                                    <th>Ingreso</th>
+                                    <th>Peso</th>
+                                    <th>Diferencia</th>
+                                    <th>Transportadora</th>
+                                    <th>Salida por</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="myTable">
                                 @foreach($guiasImportaciones as $guia)
                                 <tr>
+                                    <td>{{ $guia->created_at}}</td>
                                     <td>{{ $guia->id}}</td>
                                     <td>{{ $guia->id_cdc}}</td> 
-                                  
+                                    <td>{{ $guia->id_cdc}}</td> 
+                                    <td>{{ $guia->peso}}</td> 
+                                    <td>{{ $guia->peso}}</td>
+                                    <td>{{ $guia->guia_transportadora}}</td>
                                     <td>{{ $guia->name}}</td>
                                     <td>
                                             <a data-href="{{ url('/entradas/'.$guia->id.'/edit') }}" id="btnEditar" class="editForm btn btn-warning btn-sm">Editar</a>
@@ -182,7 +190,6 @@ $(document).ready(function() {
   });
 });
 
-
 $(function() {
     $('#tabla_guias').DataTable({
         "order": [[0, "desc"]],
@@ -219,6 +226,14 @@ $(function() {
     });
   }, false);
 })();
+
+@if(Session::has('messageVacio')) 
+alert('No puedes dar salida a una guia sin identificar');
+@endif
+
+@if(Session::has('messageEntrada')) 
+alert('No puedes dar salida a una guia sin tener una entrada');
+@endif
 
 </script>
 @endsection
