@@ -17,14 +17,11 @@ class CreateSalidasBodegasTable extends Migration
             $table->engine="InnoDB"; //Permite el borrado en cascada
             
             $table->id();
-
-            $table->double('peso', 8, 2);
-            $table->string("url_imagen");
+            $table->double('peso_salida', 8, 2);
+            $table->double('peso_diferencia', 8, 2);
             $table->string("guia_transportadora");
-            $table->string("transportadora");
-            $table->string("unidad");
+            $table->string("url_imagen")->nullable();
             $table->timestamps();
-
             $table->string("id_cdc");
             $table->unsignedBigInteger('user_id');         
             
