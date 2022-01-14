@@ -15,16 +15,14 @@
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
                                 <h3 class="nav-link">Codigo de ingreso #: {{ $id }}</h3>
-                                {{-- <a class="nav-link" id="profile-tab" data-bs-toggle="tab" href="#audiences" role="tab" aria-selected="false">Audiences</a> --}}
                             </li>
-                            {{-- <li class="nav-item">
-                            <a class="nav-link" id="contact-tab" data-bs-toggle="tab" href="#demographics" role="tab" aria-selected="false">Demographics</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link border-0" id="more-tab" data-bs-toggle="tab" href="#more" role="tab" aria-selected="false">More</a>
-                        </li> --}}
                         </ul>
                         <div>
+                            <div class="btn-wrapper">
+                                <button class="btn btn-primary text-white me-0">Export</button>
+
+                                {{-- <a href="{{ url('ingresos/'.$id.'/export-excel')}}" class="btn btn-primary text-white me-0"><i class="icon-download"></i>Exportar</a> --}}
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-12 grid-margin stretch-card">
@@ -101,10 +99,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
 
+    <script src="{{ asset('js/jquery.table2excel.js') }}"></script>
+
     <script>
         var volumen, peso;
-        var intVal = function ( i ) {
-            return typeof i === 'string' ? i.replace(/[\$,]/g, '')*1 : typeof i === 'number' ? i : 0;
+        var intVal = function(i) {
+            return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
         };
         $(document).ready(function() {
             $(".editForm").click(function() {
@@ -118,87 +118,89 @@
         $(function() {
             $('#tabla_guias').DataTable({
                 "rowGroup": {
-                    endRender: function ( rows, group ) {
-                        peso = rows.data().pluck(6).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) ; 
-                        volumen = rows.data().pluck(9).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) ;
-                        pesoV = rows.data().pluck(8).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) ; 
-                       return $('<tr/>').append(
-                            '<td> <b> Volumen: '+volumen+' </b> </td>' +
-                            '<td> <b> Peso: '+peso+ ' </b> </td>' 
-                        ); 
+                    endRender: function(rows, group) {
+                        peso = rows.data().pluck(6).reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                        volumen = rows.data().pluck(9).reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                        pesoV = rows.data().pluck(8).reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+                        return $('<tr/>').append(
+                            '<td> <b> Totales </b> </td>' +
+                            '<td> </td>' +
+                            '<td> </td>' +
+                            '<td> </td>' +
+                            '<td> </td>' +
+                            '<td> <b>' + peso + ' </b> </td>' +
+                            '<td> </td>' +
+                            '<td> <b> ' + pesoV + ' </b> </td>' +
+                            '<td> <b> ' + volumen + ' </b> </td>' 
+                        );
                     },
                     dataSrc: [7]
                 },
-                "footerCallback": function ( row, data, start, end, display ) {
-                    var api = this.api(), data;
-                    pesoTotal = api.column( 6, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-                    pesoVTotal = api.column( 8, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-                    volumenTotal = api.column( 9, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-                    $( api.column( 6 ).footer() ).html(pesoTotal);
-                    $( api.column( 8 ).footer() ).html(pesoVTotal);
-                    $( api.column( 9 ).footer() ).html(volumenTotal); 
+                "footerCallback": function(row, data, start, end, display) {
+                    var api = this.api(),
+                        data;
+                    pesoTotal = api.column(6, {
+                        page: 'current'
+                    }).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                    pesoVTotal = api.column(8, {
+                        page: 'current'
+                    }).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                    volumenTotal = api.column(9, {
+                        page: 'current'
+                    }).data().reduce(function(a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+                    $(api.column(6).footer()).html(pesoTotal);
+                    $(api.column(8).footer()).html(pesoVTotal);
+                    $(api.column(9).footer()).html(volumenTotal);
 
                 },
-                "drawCallback": function(){
+                "drawCallback": function() {
                     var api = this.api();
-                    $(api.column(7).footer()).html(
-                        'Total: ' +api.column(7 ,{page:'current'}).data().count() + '<br>' + 
-                        'Paqueteria: ' +api.column(7 ,{page:'current'}).data().filter(function( value, index) {return value == 'Paqueteria' ? true : false; }).count() + '<br>' + 
-                        'Comercial: ' + api.column(7 ,{page:'current'}).data().filter(function( value, index) {return value == 'Comercial' ? true : false; }).count() + '<br>' + 
-                        'Otra : ' +  api.column([0, 7] ,{page:'current'}).data().filter(function( value, index) {return value == 'Comercial' ? true : false; }).pluck(6).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) 
+                    $(api.column(0).footer()).html(
+                        'Total: ' + api.column(7, {
+                            page: 'current'
+                        }).data().count() + '<br>' +
+                        'Paqueteria: ' + api.column(7, {
+                            page: 'current'
+                        }).data().filter(function(value, index) {
+                            return value == 'Paqueteria' ? true : false;
+                        }).count() + '<br>' +
+                        'Comercial: ' + api.column(7, {
+                            page: 'current'
+                        }).data().filter(function(value, index) {
+                            return value == 'Comercial' ? true : false;
+                        }).count() 
 
                     )
                 },
-                dom: 'Bfrtip', 
-                "buttons": [
-                    { 
-                        extend: 'excelHtml5', 
-                        title: 'ingreso_{{ $id }}' , 
-                        footer: true , 
-                        customize: function( xlsx ) {
-                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                            $('row:first c', sheet).attr( 's', '42' );
-                        }
-                    },
-                    { extend: 'pdfHtml5', title: 'Data export' }
-                ],
                 "order": [
                     [7, "desc"]
                 ],
-                "pageLength": 20,
+                "pageLength": -1,
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
                 }
             });
         });
 
-        /* Modal para agregar un nuevo ingreso */
-        $(function() {
-            $('#ingreso').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget)
-                var minutaid = button.data('id')
-                var modal = $(this)
-                modal.find('.modal-title').text('Crear nuevo ingreso')
-            })
+        $("button").click(function() {
+            $('#tabla_guias').table2excel({
+                exclude: ".noExl",
+                name: "ingreso_{{ $id }}",
+                filename: "ingreso_{{ $id }}", 
+                fileext: ".xls" 
+            });
         });
-
-        // 
-        (function() {
-            'use strict';
-            window.addEventListener('load', function() {
-                // Fetch all the forms we want to apply custom Bootstrap validation styles to
-                var forms = document.getElementsByClassName('needs-validation');
-                // Loop over them and prevent submission
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
-                        if (form.checkValidity() === false) {
-                            event.preventDefault();
-                            event.stopPropagation();
-                        }
-                        form.classList.add('was-validated');
-                    }, false);
-                });
-            }, false);
-        })();
     </script>
 @endsection
