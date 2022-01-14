@@ -58,7 +58,7 @@
                                                     <td>{{ $guia->ancho }}</td>
                                                     <td>{{ $guia->peso }}</td>
                                                     <td>{{ $guia->tipo }}</td>
-                                                    <td>{{ $guia->peso_volumetrico }}</td>
+                                                    <td>{{ number_format($guia->peso_volumetrico, 2) }}</td>
                                                     <td>{{ $guia->volumen }}</td>
                                                     <td>{{ $guia->name }}</td>
                                                 </tr>
@@ -66,8 +66,8 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
-                                                <th style="width:15px">ID</th>
                                                 <th>Totales</th>
+                                                <th></th>
                                                 <th></th>
                                                 <th></th>
                                                 <th></th>
@@ -99,8 +99,13 @@
     <script src="https://cdn.datatables.net/buttons/2.1.0/js/buttons.html5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.1.4/js/dataTables.rowGroup.min.js"></script>
 
     <script>
+        var volumen, peso;
+        var intVal = function ( i ) {
+            return typeof i === 'string' ? i.replace(/[\$,]/g, '')*1 : typeof i === 'number' ? i : 0;
+        };
         $(document).ready(function() {
             $(".editForm").click(function() {
                 var caracteristicas =
@@ -110,39 +115,55 @@
                 return true;
             });
         });
-
         $(function() {
             $('#tabla_guias').DataTable({
+                "rowGroup": {
+                    endRender: function ( rows, group ) {
+                        peso = rows.data().pluck(6).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) ; 
+                        volumen = rows.data().pluck(9).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) ;
+                        pesoV = rows.data().pluck(8).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) ; 
+                       return $('<tr/>').append(
+                            '<td> <b> Volumen: '+volumen+' </b> </td>' +
+                            '<td> <b> Peso: '+peso+ ' </b> </td>' 
+                        ); 
+                    },
+                    dataSrc: [7]
+                },
                 "footerCallback": function ( row, data, start, end, display ) {
                     var api = this.api(), data;
-                    // Remove the formatting to get integer data for summation
-                    var intVal = function ( i ) {
-                        return typeof i === 'string' ? i.replace(/[\$,]/g, '')*1 : typeof i === 'number' ? i : 0;
-                    };
-                    // Total over all pages
-                    total = api.column(6).data().reduce( function (a, b) { return intVal(a) + intVal(b);}, 0 );
-                    total1 = api.column(8).data().reduce( function (a, b) { return intVal(a) + intVal(b);}, 0 );
-                    total2 = api.column(9).data().reduce( function (a, b) { return intVal(a) + intVal(b);}, 0 );
-                    // Total over this page
-                    pageTotal = api.column( 6, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-                    pageTotal1 = api.column( 8, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
-                    pageTotal2 = api.column( 9, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+                    pesoTotal = api.column( 6, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+                    pesoVTotal = api.column( 8, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+                    volumenTotal = api.column( 9, { page: 'current'} ).data().reduce( function (a, b) {return intVal(a) + intVal(b);}, 0 );
+                    $( api.column( 6 ).footer() ).html(pesoTotal);
+                    $( api.column( 8 ).footer() ).html(pesoVTotal);
+                    $( api.column( 9 ).footer() ).html(volumenTotal); 
 
-                    //tipo1 = api.column( 0 ).data().filter( function( a, b) ) {return a == "Paqueteria" ? true: false; };
-                    // Update footer
-                    $( api.column( 6 ).footer() ).html(pageTotal);
-                    $( api.column( 8 ).footer() ).html(pageTotal1);
-                    $( api.column( 9 ).footer() ).html(pageTotal2);
-                    //$( api.column( 7 ).footer() ).html(tipo1);
+                },
+                "drawCallback": function(){
+                    var api = this.api();
+                    $(api.column(7).footer()).html(
+                        'Total: ' +api.column(7 ,{page:'current'}).data().count() + '<br>' + 
+                        'Paqueteria: ' +api.column(7 ,{page:'current'}).data().filter(function( value, index) {return value == 'Paqueteria' ? true : false; }).count() + '<br>' + 
+                        'Comercial: ' + api.column(7 ,{page:'current'}).data().filter(function( value, index) {return value == 'Comercial' ? true : false; }).count() + '<br>' + 
+                        'Otra : ' +  api.column([0, 7] ,{page:'current'}).data().filter(function( value, index) {return value == 'Comercial' ? true : false; }).pluck(6).reduce( function (a, b) { return intVal(a) + intVal(b); }, 0) 
 
+                    )
                 },
                 dom: 'Bfrtip', 
                 "buttons": [
-                    { extend: 'excelHtml5', title: 'ingreso_{{ $id }}' , footer: true},
+                    { 
+                        extend: 'excelHtml5', 
+                        title: 'ingreso_{{ $id }}' , 
+                        footer: true , 
+                        customize: function( xlsx ) {
+                            var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                            $('row:first c', sheet).attr( 's', '42' );
+                        }
+                    },
                     { extend: 'pdfHtml5', title: 'Data export' }
                 ],
                 "order": [
-                    [0, "desc"]
+                    [7, "desc"]
                 ],
                 "pageLength": 20,
                 "language": {
