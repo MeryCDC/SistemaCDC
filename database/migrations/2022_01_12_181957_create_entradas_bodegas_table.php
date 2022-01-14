@@ -22,7 +22,8 @@ class CreateEntradasBodegasTable extends Migration
             $table->double('largo');
             $table->double('ancho');
             $table->double('alto');
-            $table->double('peso_volumetrico')->storedAs('(alto * ancho * largo) / 166')->nullable();
+            $table->string("tipo");
+            $table->double('peso_volumetrico')->storedAs('(alto * ancho * largo) / 129360')->nullable();
             $table->double('volumen')->storedAs('alto * ancho * largo')->nullable();
             $table->timestamps();
 
