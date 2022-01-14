@@ -19,6 +19,12 @@ class EntradasBodegasController extends Controller
 
     public function store(Request $request)
     {
+        $tipo_pqt = "Paqueteria";
+        $active = $request->has('tipo_paquete'); 
+        if($active){
+            $tipo_pqt = "Comercial";
+        }
+
         //Agrego la nueva entrada
          $datos = new entradas_bodegas();
          $datos->tgp = $request->tgp;
@@ -26,6 +32,7 @@ class EntradasBodegasController extends Controller
          $datos->largo = $request->largo;
          $datos->ancho = $request->ancho;
          $datos->alto = $request->alto;
+         $datos->tipo = $tipo_pqt;
          $datos->user_id = $request->user_id;
          $datos->save();  
 
