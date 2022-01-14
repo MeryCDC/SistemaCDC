@@ -37,25 +37,37 @@ class SalidasBodegasController extends Controller
      */
     public function store(Request $request)
     {
-        $guia = entradas_bodegas::where('tgp', '=', $request->tgp)->orWhere('id', '=' , $request->tgp)->get();
+        $idCDC = "";
+        $peso_original = "";
+        $guiasImportaciones = entradas_bodegas::where('tgp', '=', $request->tgp)->orWhere('id', '=' , $request->tgp)->get();
         
-        if(sizeof($guia) > 0){
+        foreach($guiasImportaciones as $guia){
+            $idCDC = $guia['id_cdc'];
+            $peso_original = $guia['peso'];
+        }
+        
+        if(sizeof($guiasImportaciones) > 0){
             if (empty($guia->id_cdc)) {
                 return redirect()->route('salidas.guias' , $request->id_importacion)->with('messageVacio', 'Vacio');
+            }  else {
+                $diferencia =  $peso_original - $request->peso;
+                $datos = new salidas_bodegas();
+                $datos->peso_salida = $request->peso;
+                $datos->peso_diferencia = $diferencia;
+                $datos->id_cdc = $idCDC;
+                $datos->user_id = $request->user_id;
+                $datos->guia_transportadora = $request->guia_transportadora;
+                $datos->save(); 
+                $idNuevo = salidas_bodegas::latest('id')->first(); 
+    
+                //relaciono con la tabla intermedia
+                $relacion = new out_impo_bods();
+                $relacion->out_imp_id = $request->id_importacion;
+                $relacion->out_bod_id = $idNuevo['id'];
+                $relacion->save(); 
+    
+                return redirect()->route('salidas.guias' , $request->id_importacion);
             }
-            $datos = new salidas_bodegas();
-            $datos->peso_salida = $request->peso;
-            $datos->user_id = $request->user_id;
-            $datos->guia_transportadora = $request->guia_transportadora;
-            $datos->save(); 
-            $idNuevo = salidas_bodegas::latest('id')->first(); 
-            //relaciono con la tabla intermedia
-            $relacion = new out_impo_bods();
-            $relacion->out_imp_id = $request->id_importacion;
-            $relacion->out_bod_id = $idNuevo['id'];
-            $relacion->save(); 
-
-            return redirect()->route('salidas.guias' , $request->id_importacion);
         } else {
             return redirect()->route('salidas.guias' , $request->id_importacion)->with('messageEntrada', 'Vacio');
         }

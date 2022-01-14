@@ -32,4 +32,6 @@ Route::resource('/egresos' , SalidasBodegasController::class )->middleware('auth
 
 Route::get('/salidas/{id}/guias', [SalidasImportacionsController::class, 'show'])->name('salidas.guias')->middleware('auth');
 
-Route::get('/entradas/export-excel', [EntradasBodegaController::class, 'exportExcel'])->name('entradas.excel')->middleware('auth');
+Route::get('/ingresos/{id}/export-excel', [EntradasImportacionesController::class, 'exportExcel'])->name('ingresos.excel')->middleware('auth');
+
+/* Route::get('/entradas/export-excel', [EntradasBodegaController::class, 'exportExcel'])->name('entradas.excel')->middleware('auth'); */ 

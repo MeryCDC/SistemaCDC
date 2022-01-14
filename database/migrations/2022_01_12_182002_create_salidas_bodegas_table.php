@@ -20,6 +20,7 @@ class CreateSalidasBodegasTable extends Migration
             $table->double('peso_salida', 8, 2);
             $table->double('peso_diferencia', 8, 2);
             $table->string("guia_transportadora");
+            $table->string("tgp");
             $table->string("url_imagen")->nullable();
             $table->timestamps();
             $table->string("id_cdc");
