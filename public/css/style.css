@@ -33330,3 +33330,15 @@ div.tagsinput span.tag a {
 
 
 /*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */
+
+/* Add responsiveness - display the form controls vertically instead of horizontally on screens that are less than 800px wide */
+@media (max-width: 1200px) {
+    .form-inline input {
+      margin: 10px 0;
+    }
+  
+    .form-inline {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
