@@ -35,23 +35,18 @@ class EntradasBodegasController extends Controller
          $datos->tipo = $tipo_pqt;
          $datos->user_id = $request->user_id;
          $datos->save();  
-
          $idNuevo = entradas_bodegas::latest('id')->first(); 
-
          //En caso de ingresar un tracking
          if(!empty($datos->tgp)){
             $cdc = entradas_bodegas::find($idNuevo['id']);
-
             $searchString = " ";
             $replaceString = "";
             $originalTGP = $idNuevo['tgp']; 
             $outputTGP = str_replace($searchString, $replaceString, $originalTGP); 
-
             $id_nuestro =  $outputTGP.'-'. $idNuevo['id'];
             $cdc->id_cdc = $id_nuestro;
             $cdc->save();
          }
-
 
          //relaciono con la tabla intermedia
          $relacion = new int_impo_bods();
@@ -72,7 +67,6 @@ class EntradasBodegasController extends Controller
     {
         $ingreso = entradas_bodegas::find($id);
         return view('entradas.editar', compact('ingreso'));
-        //return view('ingresos.index', compact('ingresos'));
     }
 
     public function update(Request $request, $id)
@@ -90,17 +84,18 @@ class EntradasBodegasController extends Controller
             $cdc->id_cdc = $id_nuestro;
             $cdc->save();
         } 
-
         return redirect()->route('entradas.edit' , $id)->with('editEntrada', 'Cambios guardados correctamente'); 
     }
 
-    public function destroy(entradas_bodegas $entradas_Bodega)
+    public function destroy($id)
     {
-        //
-    }
+        $ingreso = entradas_bodegas::find($id);
+        $int = int_impo_bods::find($ingreso->id);
 
-    /* public function exportExcel()
-    {
-        return Excel::download(new ImportacionesExport, 'importaciones-lista.xlsx');
-    } */
+        int_impo_bods::destroy($ingreso->id);
+        entradas_bodegas::destroy($id);
+        
+        return redirect()->route('ingresos.guias' , $int->int_impo_id);
+        //return response()->json($int); 
+    }
 }
