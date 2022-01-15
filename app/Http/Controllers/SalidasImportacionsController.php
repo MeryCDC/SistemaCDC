@@ -38,7 +38,7 @@ class SalidasImportacionsController extends Controller
         $guiasImportaciones=out_impo_bods::join('salidas_importacions' , 'out_impo_bods.out_imp_id', '=', 'salidas_importacions.id')
         ->join('salidas_bodegas' , 'out_impo_bods.out_bod_id', '=', 'salidas_bodegas.id')
         ->join('users' , 'salidas_bodegas.user_id', '=', 'users.id')
-        ->select('salidas_bodegas.id' , 'salidas_bodegas.peso_salida', 'salidas_bodegas.guia_transportadora' , 'salidas_bodegas.created_at' , 'salidas_bodegas.id_cdc', 'users.name')
+        ->select('salidas_bodegas.id' , 'salidas_bodegas.peso_salida' , 'salidas_bodegas.peso_diferencia' , 'salidas_bodegas.guia_transportadora' , 'salidas_bodegas.created_at' , 'salidas_bodegas.id_cdc', 'users.name')
         ->where('salidas_importacions.id', '=', $id)
         ->get();
 
@@ -59,24 +59,11 @@ class SalidasImportacionsController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Salidas_Importacion  $salidas_Importacion
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, salidas_importacions $salidas_Importacion)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Salidas_Importacion  $salidas_Importacion
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(salidas_importacions $salidas_Importacion)
     {
         //

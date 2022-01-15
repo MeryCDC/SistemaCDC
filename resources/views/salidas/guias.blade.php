@@ -93,12 +93,12 @@
                                                 <tr>
                                                     <td>{{ $guia->created_at }}</td>
                                                     <td>{{ $guia->id }}</td>
+                                                    <td>{{ $guia->tgp }}</td>
                                                     <td>{{ $guia->id_cdc }}</td>
-                                                    <td>{{ $guia->id_cdc }}</td>
-                                                    <td>{{ $guia->peso }}</td>
-                                                    <td>{{ $guia->peso }}</td>
+                                                    <td>{{ $guia->peso_salida }}</td>
+                                                    <td>{{ $guia->peso_diferencia }}</td>
                                                     <td>{{ $guia->guia_transportadora }}</td>
-                                                    <td>{{ $guia->name }}</td>
+                                                    <td>{{ $guia->name }}</td> 
                                                     <td>
                                                         <a data-href="{{ url('/entradas/' . $guia->id . '/edit') }}"
                                                             id="btnEditar"

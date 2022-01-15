@@ -20,8 +20,6 @@
                         <div>
                             <div class="btn-wrapper">
                                 <button class="btn btn-primary text-white me-0">Export</button>
-
-                                {{-- <a href="{{ url('ingresos/'.$id.'/export-excel')}}" class="btn btn-primary text-white me-0"><i class="icon-download"></i>Exportar</a> --}}
                             </div>
                         </div>
                     </div>
@@ -56,7 +54,7 @@
                                                     <td>{{ $guia->ancho }}</td>
                                                     <td>{{ $guia->peso }}</td>
                                                     <td>{{ $guia->tipo }}</td>
-                                                    <td>{{ number_format($guia->peso_volumetrico, 2) }}</td>
+                                                    <td>{{ number_format($guia->peso_volumetrico, 3) }}</td>
                                                     <td>{{ $guia->volumen }}</td>
                                                     <td>{{ $guia->name }}</td>
                                                 </tr>
@@ -135,6 +133,7 @@
                             '<td> </td>' +
                             '<td> </td>' +
                             '<td> <b>' + peso + ' </b> </td>' +
+                            '<td> </td>' +
                             '<td> </td>' +
                             '<td> <b> ' + pesoV + ' </b> </td>' +
                             '<td> <b> ' + volumen + ' </b> </td>' 
