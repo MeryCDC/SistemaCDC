@@ -30,17 +30,17 @@
                                     <table id="tabla_guias" class="table dt-responsive table-sm">
                                         <thead>
                                             <tr>
-                                                <th style="width:15px">ID</th>
-                                                <th>T/G/P</th>
-                                                <th>ID CDC</th>
-                                                <th>Alto</th>
-                                                <th>Largo</th>
-                                                <th>Ancho</th>
-                                                <th>Peso</th>
-                                                <th>Tipo</th>
-                                                <th>Peso volumetrico</th>
-                                                <th>Volumen</th>
-                                                <th>Ingreso</th>
+                                                <th style="width:15px"><b>ID</b></th>
+                                                <th><b> T/G/P </b></th>
+                                                <th><b>ID CDC </b></th>
+                                                <th><b>Alto </b></th>
+                                                <th><b>Largo </b></th>
+                                                <th><b>Ancho </b></th>
+                                                <th><b>Peso </b></th>
+                                                <th><b>Tipo </b></th>
+                                                <th><b>Peso volumetrico </b></th>
+                                                <th><b>Volumen </b></th>
+                                                <th><b>Ingreso </b></th>
                                             </tr>
                                         </thead>
                                         <tbody id="myTable">

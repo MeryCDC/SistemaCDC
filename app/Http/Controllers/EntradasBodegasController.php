@@ -36,6 +36,7 @@ class EntradasBodegasController extends Controller
          $datos->user_id = $request->user_id;
          $datos->save();  
          $idNuevo = entradas_bodegas::latest('id')->first(); 
+         $tgp = $idNuevo['tgp'];
          //En caso de ingresar un tracking
          if(!empty($datos->tgp)){
             $cdc = entradas_bodegas::find($idNuevo['id']);
@@ -54,7 +55,7 @@ class EntradasBodegasController extends Controller
          $relacion->int_bod_id = $idNuevo['id'];
          $relacion->save();
          
-         return redirect()->route('ingresos.guias' , $request->id_importacion);
+         return redirect()->route('ingresos.guias' , $request->id_importacion)->with('ultimaGuia', $tgp); 
          //return response()->json($idNuevo); 
     }
 

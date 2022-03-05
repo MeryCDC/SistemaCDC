@@ -55,6 +55,7 @@
                             </table>
                         </td>
                     </tr>
+                    @if (is_null($guia->tgp))
                     <tr style="border-bottom: 1px solid red">
                         <td>
                             <span style="font-size:28px; font-weight: bold;">
@@ -64,6 +65,26 @@
                                 alt="barcode" /><br><br>
                         </td>
                     </tr>
+                    @else
+                    <tr style="border-bottom: 1px solid red">
+                        <td>
+                            <span style="font-size:28px; font-weight: bold;">
+                                ID: {{ $guia->id }}</span>
+                            <br>
+                            <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($guia->id, 'C39') }}"
+                                alt="barcode" /><br><br>
+                        </td> 
+                    </tr>
+                    <tr style="border-bottom: 1px solid red">
+                        <td>
+                            <span style="font-size:28px; font-weight: bold;">
+                                G/T/P: {{ $guia->tgp}}</span>
+                            <br>
+                            <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($guia->tgp, 'C39') }}"
+                                alt="barcode" /><br><br>
+                        </td>
+                    </tr>
+                    @endif
                 @endforeach
                 <tr>
                     <td>

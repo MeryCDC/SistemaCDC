@@ -18,6 +18,11 @@
                             <li class="nav-item">
                                 <h3 class="nav-link">Codigo de ingreso #: {{ $id }}</h3>
                             </li>
+                            <li class="nav-item">
+                                @if (Session::has('ultimaGuia'))
+                                    <h3 class="nav-link">{{Session::get('ultimaGuia')}}</h3>
+                                @endif
+                            </li>
                         </ul>
                         <div>
                             <div class="btn-wrapper">
@@ -30,7 +35,8 @@
                     <div class="d-sm-flex align-items-center justify-content-between border-bottom">
                         <ul class="nav nav-tabs" role="tablist">
                             <li class="nav-item">
-                                <form action="{{ url('/entradas') }}" class="form-inline needs-validation" id="formGuias" method="POST" novalidate>
+                                <form action="{{ url('/entradas') }}" class="form-inline needs-validation" id="formGuias"
+                                    method="POST" novalidate>
                                     @csrf
                                     <div class="form-group form-row align-items-center">
                                         <div class="col-auto">
@@ -50,7 +56,7 @@
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <label>Alto *</label> 
+                                            <label>Alto *</label>
                                             <input type="number" step="any" name="alto" id="alto" class="form-control"
                                                 required />
                                             <div class="invalid-feedback">
@@ -152,7 +158,7 @@
                         </form>
                     </div> --}}
 
-                    
+
                     {{-- Tabla de guias --}}
                     <div class="col-md-12 grid-margin stretch-card">
                         <div class="card">
@@ -214,12 +220,14 @@
                                                             data-nombre="{{ $guia->id }}">
                                                             <i class="ti-trash"></i>Sacar
                                                         </button>
+
+                                                        <a href="{{ url('/etiqueta/' . $guia->id) }}" target="_blank"
+                                                                class="btn btn-info btn-sm">Label</a>
                                                         @if (empty($guia->tgp))
                                                             <a data-href="{{ url('/entradas/' . $guia->id . '/edit') }}"
                                                                 id="btnEditar"
                                                                 class="editForm btn btn-warning btn-sm">Editar</a>
-                                                            <a href="{{ url('/etiqueta/' . $guia->id) }}" target="_blank"
-                                                                class="btn btn-info btn-sm">Label</a>
+                                                            
                                                         @endif
                                                     </td>
                                                 </tr>

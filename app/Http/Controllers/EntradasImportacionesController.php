@@ -44,7 +44,7 @@ class EntradasImportacionesController extends Controller
          ->where('entradas_importaciones.id', '=', $id)
          ->get();
 
-         return view('ingresos.guias', compact('guiasImportaciones' , 'id'));  
+         return view('ingresos.guias', compact('guiasImportaciones' , 'id') );  
          //return response()->json($guiasImportaciones); 
     }
 
